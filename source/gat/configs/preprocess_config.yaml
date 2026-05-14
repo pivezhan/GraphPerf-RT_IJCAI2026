@@ -1,0 +1,311 @@
+# ==============================================================================
+# Data Preprocessing Configuration V2 - Full Feature Set (Multi-Platform)
+# ==============================================================================
+
+datasets:
+  rubikpi:
+    raw_data: "data/raw/v2/profiling_data_rubikpi_v2.csv"
+    processed_data: "data/processed/v2/rubikpi_processed.csv"
+    normalized_data: "data/processed/v2/rubikpi_normalized.csv"
+    metadata: "data/processed/v2/rubikpi_metadata.json"
+    platform_name: "RUBIKPi"
+    num_cores: 8
+    num_thermal_zones: 36
+  
+  tx2:
+    raw_data: "data/raw/v2/profiling_data_tx2_v2.csv"
+    processed_data: "data/processed/v2/tx2_processed.csv"
+    normalized_data: "data/processed/v2/tx2_normalized.csv"
+    metadata: "data/processed/v2/tx2_metadata.json"
+    platform_name: "JetsonTX2"
+    num_cores: 6
+    num_thermal_zones: 8
+
+# Merged dataset paths
+merged:
+  processed_data: "data/processed/v2/merged_processed.csv"
+  normalized_data: "data/processed/v2/merged_normalized.csv"
+  metadata: "data/processed/v2/merged_metadata.json"
+
+# ==============================================================================
+# Platform Adaptation - Pad to maximum dimensions
+# ==============================================================================
+
+platform_adaptation:
+  max_cores: 8  # Maximum across all platforms
+  max_thermal_zones: 36  # Maximum across all platforms
+  padding_value: 0  # Value to use for padding
+
+# ==============================================================================
+# Features Configuration - ALL usable features
+# ==============================================================================
+
+features:
+  
+  # Categorical features
+  categorical:
+    run_mode:
+      dtype: "int8"
+      mapping:
+        sequential: 0
+        parallel: 1
+    
+    benchmark:
+      dtype: "int8"
+      auto_detect: true
+    
+    variant:
+      dtype: "int8"
+      auto_detect: true
+      optional: true
+    
+    platform:
+      dtype: "int8"
+      mapping:
+        Rubikpi: 0
+        RubikPi: 0
+        RUBIKPi: 0
+        JetsonTX2: 1
+        JetsonNX: 2
+  
+  # Numerical features (before execution)
+  numerical_before:
+    frequency_index:
+      dtype: "int16"
+    
+    num_cores:
+      dtype: "int8"
+    
+    cores_str:
+      dtype: "int8"
+    
+    input_arg:
+      dtype: "float32"
+      optional: true
+      fill_missing: 0
+    
+    avg_temp_before:
+      dtype: "float32"
+  
+  # Performance counters (after execution) - NEW!
+  performance_counters:
+    branch_misses:
+      dtype: "float32"
+      optional: true
+      fill_missing: 0
+    
+    cache_misses:
+      dtype: "float32"
+      optional: true
+      fill_missing: 0
+    
+    cycles:
+      dtype: "float32"
+      optional: true
+      fill_missing: 0
+    
+    cache_references:
+      dtype: "float32"
+      optional: true
+      fill_missing: 0
+    
+    branch_instructions:
+      dtype: "float32"
+      optional: true
+      fill_missing: 0
+    
+    instructions:
+      dtype: "float32"
+      optional: true
+      fill_missing: 0
+    
+    context_switches:
+      dtype: "float32"
+      optional: true
+      fill_missing: 0
+    
+    minor_faults:
+      dtype: "float32"
+      optional: true
+      fill_missing: 0
+    
+    major_faults:
+      dtype: "float32"
+      optional: true
+      fill_missing: 0
+    
+    page_faults:
+      dtype: "float32"
+      optional: true
+      fill_missing: 0
+    
+    task_clock:
+      dtype: "float32"
+      optional: true
+      fill_missing: 0
+    
+    cpu_clock:
+      dtype: "float32"
+      optional: true
+      fill_missing: 0
+    
+    user:
+      dtype: "float32"
+      optional: true
+      fill_missing: 0
+    
+    sys:
+      dtype: "float32"
+      optional: true
+      fill_missing: 0
+  
+  # Array features (platform-specific lengths, will be padded)
+  arrays:
+    frequency_combination:
+      dtype: "int16"
+      output_prefix: "freq_lvl"
+      platform_lengths:
+        RUBIKPi: 8
+        JetsonTX2: 6
+      max_length: 8
+    
+    frequencies:
+      dtype: "int32"
+      output_prefix: "freq_hz"
+      platform_lengths:
+        RUBIKPi: 8
+        JetsonTX2: 6
+      max_length: 8
+  
+  # Special features
+  special:
+    core_combination:
+      parse_as: "binary_mask"
+      dtype: "int8"
+      output_prefix: "core_active"
+      max_length: 8
+  
+  # Thermal zones (platform-specific, will be padded)
+  thermal:
+    input_prefix: "thermal_zone_before"
+    exclude_zeros: true
+    output_column: "thermal_init_mean"
+    dtype: "float32"
+
+# ==============================================================================
+# Target Variable
+# ==============================================================================
+
+targets:
+  - name: "time_elapsed"
+    dtype: "float32"
+    primary: true
+
+# ==============================================================================
+# Normalization - Applied to MERGED data
+# ==============================================================================
+
+normalization:
+  method: "standard"
+  
+  # Categorical features (not normalized)
+  exclude_categorical:
+    - run_mode
+    - benchmark
+    - variant
+    - platform
+  
+  # Binary features (not normalized)
+  exclude_binary:
+    - core_active_0
+    - core_active_1
+    - core_active_2
+    - core_active_3
+    - core_active_4
+    - core_active_5
+    - core_active_6
+    - core_active_7
+  
+  # Normalize everything else (will be auto-detected)
+  normalize_all_numerical: true
+
+# ==============================================================================
+# Data Cleaning
+# ==============================================================================
+
+cleaning:
+  remove_duplicates: true
+  drop_na: true
+  
+  constraints:
+    time_elapsed:
+      min: 0.001
+      max: 10000
+    num_cores:
+      min: 1
+      max: 8
+
+# ==============================================================================
+# GAT Structure
+# ==============================================================================
+
+gat_structure:
+  num_nodes: 8
+  
+  # Per-core features (node features)
+  node_features:
+    - core_active_0
+    - core_active_1
+    - core_active_2
+    - core_active_3
+    - core_active_4
+    - core_active_5
+    - core_active_6
+    - core_active_7
+    - freq_lvl_0
+    - freq_lvl_1
+    - freq_lvl_2
+    - freq_lvl_3
+    - freq_lvl_4
+    - freq_lvl_5
+    - freq_lvl_6
+    - freq_lvl_7
+    - freq_hz_0
+    - freq_hz_1
+    - freq_hz_2
+    - freq_hz_3
+    - freq_hz_4
+    - freq_hz_5
+    - freq_hz_6
+    - freq_hz_7
+  
+  # Global features (graph-level)
+  global_features:
+    # Categorical
+    - run_mode
+    - benchmark
+    - variant
+    - platform
+    # Configuration
+    - num_cores
+    - cores_str
+    - frequency_index
+    - input_arg
+    # Initial state
+    - avg_temp_before
+    - thermal_init_mean
+    # Performance counters
+    - branch_misses
+    - cache_misses
+    - cycles
+    - cache_references
+    - branch_instructions
+    - instructions
+    - context_switches
+    - minor_faults
+    - major_faults
+    - page_faults
+    - task_clock
+    - cpu_clock
+    - user
+    - sys

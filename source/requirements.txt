@@ -1,0 +1,40 @@
+# GraphPerf-RT — pinned Python dependencies
+# IJCAI-ECAI 2026 (AI4Tech) reproducibility release
+#
+# Tested with Python 3.10.12 on Ubuntu 22.04
+#   - CPU only (sufficient to reproduce GAT + NIG accuracy/calibration)
+#   - CUDA 11.8 / 12.1 (recommended for the 48-config NIG sweep)
+#
+# Install with:
+#   python3 -m venv .venv && source .venv/bin/activate
+#   pip install --upgrade pip
+#   pip install -r requirements.txt
+#
+# PyTorch Geometric needs a matching torch wheel — if the install fails on
+# your platform, follow https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html
+# to pick the right pre-built wheel for your CUDA / CPU combination.
+
+# ----- core deep learning -----------------------------------------------------
+torch==2.1.0
+torch-geometric==2.4.0
+torch-scatter==2.1.2
+torch-sparse==0.6.18
+
+# ----- numerics & data --------------------------------------------------------
+numpy>=1.26,<2.0
+pandas>=2.1,<2.3
+scipy>=1.11,<1.14
+scikit-learn>=1.3,<1.6
+
+# ----- plotting (figures/plot_figures.py) -------------------------------------
+matplotlib>=3.8,<3.10
+seaborn>=0.13,<0.14
+
+# ----- IO / progress / configs ------------------------------------------------
+PyYAML>=6.0
+tqdm>=4.66
+joblib>=1.3
+
+# ----- on-device RL (server / client) -----------------------------------------
+# psutil is used by rl/on_device/client.py to read Jetson thermal zones.
+psutil>=5.9

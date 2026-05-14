@@ -1,0 +1,74 @@
+# ==============================================================================
+# GAT Model Configuration - V2 Dataset (Log-Transformed)
+# ==============================================================================
+
+# Model Architecture
+model:
+  type: 'gat'  # 'gat' or 'mlp'
+  
+  # Feature dimensions (will be auto-detected from data)
+  node_feature_dim: 3      # Per-core: core_active, freq_lvl, freq_hz
+  global_feature_dim: 25   # UPDATED: 4 categorical + 3 config + 1 input_arg + 2 thermal + 14 perf counters + 1 freq_index
+  
+  # Network architecture
+  hidden_dim: 256          # INCREASED for larger dataset (was 128)
+  num_gat_layers: 4        # INCREASED (was 3) - more data = deeper network
+  num_heads: 4             # Keep same
+  dropout: 0.3             # INCREASED (was 0.2) - more data = more regularization
+  pooling: 'both'          # 'mean', 'max', 'add', or 'both'
+  
+  # Output
+  output_dim: 1            # Single value prediction (time_elapsed_log)
+
+# Training Configuration
+training:
+  batch_size: 64           # INCREASED (was 32) - CPU can handle larger batches
+  num_epochs: 150          # INCREASED (was 100) - more data = train longer
+  learning_rate: 0.0005    # DECREASED (was 0.001) - larger dataset needs smaller LR
+  weight_decay: 0.0001     # Keep same
+  patience: 20             # INCREASED (was 15) - allow more time before early stopping
+  
+  # Gradient clipping (NEW - helps with stability)
+  grad_clip: 1.0
+
+# Optimizer
+optimizer:
+  type: 'adamw'            # CHANGED to AdamW (better for large datasets)
+  betas: [0.9, 0.999]
+  eps: 1e-8
+
+# Learning Rate Scheduler
+scheduler:
+  type: 'reduce_on_plateau'
+  mode: 'min'
+  factor: 0.5
+  patience: 8              # INCREASED (was 5)
+  min_lr: 0.00001
+  threshold: 0.0001
+
+# Data Configuration
+data:
+  num_workers: 8           # INCREASED (was 4) - CPU training benefits from more workers
+  pin_memory: false        # CPU training, no need to pin
+  target_column: 'time_elapsed_log'  # Log-transformed target
+  use_cfg_features: false  # Set to true if using CFG features
+
+# Paths - V2 Dataset
+paths:
+  train: 'data/splits/v2/train_log.csv'        # UPDATED
+  val: 'data/splits/v2/val_log.csv'            # UPDATED
+  test: 'data/splits/v2/test_log.csv'          # UPDATED
+  metadata: 'data/splits/scaler_params_log.json'  # UPDATED
+  checkpoints: 'experiments/checkpoints'
+  logs: 'experiments/logs'
+
+# Device
+device: 'cpu'  # CHANGED for CPU training
+
+# Logging
+logging:
+  print_every: 10          # Print metrics every N batches
+  save_every: 5            # Save checkpoint every N epochs
+  
+# Reproducibility
+seed: 42

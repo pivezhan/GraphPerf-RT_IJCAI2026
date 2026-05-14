@@ -1,0 +1,43 @@
+benchmark,suite,kind,parallelism,description
+alignment,bots,task,irregular,Pairwise sequence alignment using dynamic programming
+fft,bots,task,irregular,Fast Fourier Transform with task-based parallelism
+fib,bots,task,recursive,Recursive Fibonacci with task creation
+floorplan,bots,task,branch_bound,Branch-and-bound floorplanning
+health,bots,task,irregular,Hierarchical healthcare simulation
+knapsack,bots,task,branch_bound,0/1 knapsack via branch and bound
+nqueens,bots,task,recursive,N-queens problem
+sort,bots,task,divide_conquer,Parallel mergesort
+sparselu,bots,task,irregular,Sparse LU factorization
+strassen,bots,task,divide_conquer,Strassen matrix multiplication
+uts,bots,task,recursive,Unbalanced Tree Search
+concom,bots,task,irregular,Connected components
+2mm,polybench,loop,regular,Two matrix multiplications
+3mm,polybench,loop,regular,Three matrix multiplications
+adi,polybench,loop,regular,Alternating Direction Implicit solver
+atax,polybench,loop,regular,Matrix transpose times vector
+bicg,polybench,loop,regular,Biconjugate gradient subkernel
+cholesky,polybench,loop,regular,Cholesky decomposition
+correlation,polybench,loop,regular,Correlation computation
+covariance,polybench,loop,regular,Covariance computation
+deriche,polybench,loop,regular,Deriche edge detector
+doitgen,polybench,loop,regular,Multiresolution analysis kernel
+durbin,polybench,loop,regular,Toeplitz solver
+fdtd-2d,polybench,loop,regular,2D finite-difference time-domain
+floyd-warshall,polybench,loop,regular,All-pairs shortest paths
+gemm,polybench,loop,regular,Matrix-matrix multiply C=A*B
+gemver,polybench,loop,regular,Vector multiplication and matrix addition
+gesummv,polybench,loop,regular,Scalar/vector/matrix multiplication
+gramschmidt,polybench,loop,regular,Gram-Schmidt orthogonalisation
+heat-3d,polybench,loop,regular,3D heat equation
+jacobi-1d,polybench,loop,regular,1D Jacobi stencil
+jacobi-2d,polybench,loop,regular,2D Jacobi stencil
+lu,polybench,loop,regular,LU decomposition
+ludcmp,polybench,loop,regular,LU decomposition with pivoting
+mvt,polybench,loop,regular,Matrix-vector product / transpose
+nussinov,polybench,loop,irregular,RNA folding
+seidel-2d,polybench,loop,regular,2D Seidel stencil
+symm,polybench,loop,regular,Symmetric matrix multiplication
+syr2k,polybench,loop,regular,Symmetric rank-2k update
+syrk,polybench,loop,regular,Symmetric rank-k update
+trisolv,polybench,loop,regular,Triangular solver
+trmm,polybench,loop,regular,Triangular matrix multiplication

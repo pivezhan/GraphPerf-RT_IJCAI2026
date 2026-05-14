@@ -1,0 +1,42 @@
+{
+    "_comment": "Per-platform DVFS configuration used by GraphPerf-RT (IJCAI-ECAI 2026 supplementary, Hardware Platform Details). Frequencies in MHz; cores indexed from 0. Read by rl/on_device/client.py to populate the per-core action space; read by gat/scripts/01_process_data.py to one-hot encode the frequency_level feature.",
+
+    "tx2": {
+        "label": "NVIDIA Jetson TX2",
+        "num_cores": 6,
+        "core_layout": {
+            "denver2_cores": [1, 2],
+            "a57_cores":     [0, 3, 4, 5]
+        },
+        "frequencies_mhz": [345, 499, 652, 806, 960, 1113, 1267, 1420, 1574, 1728, 1881, 2035],
+        "default_governor": "userspace",
+        "thermal_zones": ["thermal-fan-est", "BCPU-therm", "MCPU-therm", "GPU-therm"],
+        "throttle_threshold_c": 85.0
+    },
+
+    "orin_nx": {
+        "label": "NVIDIA Jetson Orin NX",
+        "num_cores": 8,
+        "core_layout": {
+            "a78ae_cores": [0, 1, 2, 3, 4, 5, 6, 7]
+        },
+        "frequencies_mhz": [115, 268, 422, 576, 729, 883, 1036, 1190, 1344, 1497, 1651, 1804, 1984],
+        "default_governor": "schedutil",
+        "thermal_zones": ["CPU-therm", "SOC0-therm", "SOC1-therm", "SOC2-therm"],
+        "throttle_threshold_c": 90.0
+    },
+
+    "rubikpi": {
+        "label": "RUBIK Pi (Qualcomm RB3 Gen 2)",
+        "num_cores": 8,
+        "core_layout": {
+            "a78_cores": [4, 5, 6, 7],
+            "a55_cores": [0, 1, 2, 3]
+        },
+        "frequencies_mhz_a78": [307, 460, 614, 768, 921, 1075, 1228, 1382, 1536, 1689, 1843, 1996, 2150, 2304],
+        "frequencies_mhz_a55": [300, 422, 614, 768, 998, 1228, 1383, 1537, 1690, 1844, 1996],
+        "default_governor": "performance",
+        "thermal_zones": ["aoss0-usr", "cpuss-0-usr", "cpu-1-0-usr", "cpu-1-1-usr", "cpu-1-2-usr", "cpu-1-3-usr"],
+        "throttle_threshold_c": 95.0
+    }
+}
